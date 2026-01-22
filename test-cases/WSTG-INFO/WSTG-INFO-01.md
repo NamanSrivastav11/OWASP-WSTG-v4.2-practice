@@ -49,7 +49,7 @@ The test involves:
 
 ## Validation Steps
 
-1. Perform basic indexed search:
+1. Perform basic indexed search: Enumerate Intexed Content
 
    ``` site:testphp.vulnweb.com ```
 
@@ -61,3 +61,26 @@ The test involves:
 
 
     <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/321f0767-e2df-4abf-b696-49a74740e7b8" />
+
+
+
+3. Search for sensitive file types:
+
+   ``` site:testphp.vulnweb.com filetype:php```
+
+
+   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/9abcaee8-300a-455b-a78e-3a9e47d12dc5" />
+
+   
+   ```site:testphp.vulnweb.com filetype:bak```
+
+
+   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/26729f56-e48a-4be1-9d55-a71747e663fe" />
+
+
+   ```site:testphp.vulnweb.com filetype:txt```
+
+
+   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/f91a2cd4-f698-44b1-a190-de6343ba42ac" />
+
+
