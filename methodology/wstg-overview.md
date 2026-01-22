@@ -72,4 +72,38 @@ The WSTG enforces th following principles:
 
    - Every finding must be supported by observable behavior such as HTTP requests, responses, headers, or state changes.
 
-3. 
+3. **Binary Outcomes**
+
+   - Each test case results in a clear conclusion:
+     - Vulnerable
+     - Not Vulnerable
+
+4. **Context Awareness**
+
+   - Findings are evaluated within application context, not tool output severity.
+
+
+------------
+
+
+## What the WSTG is Not
+
+The WSTG is not:
+- A vulnerability scanner
+- An exploit development guide
+- A checklist without validation
+- A severity ranking framework
+
+It is a **testing methodology**, not a vulnerability database.
+
+
+-----------
+
+
+The WSTG mirrors professional penetration testing workflows by:
+- Enforcing scoped testing
+- Requiring proof of validation
+
+Proper applicatinon of the WSTG produces documentation that aligns with internal security assessments, thrid-party audits, and client-facing penetration testing reports.
+
+-----------
