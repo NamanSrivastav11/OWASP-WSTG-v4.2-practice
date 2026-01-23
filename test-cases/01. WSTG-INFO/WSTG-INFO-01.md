@@ -161,4 +161,43 @@ The following evidence was collected during testing:
 
 **VULNERABLE**
 
-Search engine indexing reveals multiple internal and functional endpoints
+Search engine indexing reveals multiple internal and functional endpoints, including parameterized URLs that expose application structure and logic. This information is accessible without authentication and requires no direct interaction with the application.
+
+
+-----------
+
+
+## Impact
+
+While search engine discovery does not directly compromise the application, it significantly enhances an attacker's ability to :
+
+- Map application functionality quickly
+- Identify attack verctors without active probing
+- Discover legacy or hidden endpoints
+- Chain with authentication, authorization, or input validation flaws
+
+This exposure lowers the overall security posture of the application.
+
+
+-----------
+
+
+## Mitigation
+
+To reduce exposure through search engine indexing:
+
+- Restrict indexing of non-public resources using `robots.txt`
+- Apply `noindex`, `nofollow` directives to sensitive pages
+- Remove or restrict access to unused legacy, or test endpoints
+- Ensure administrative and sensitive functionality requires authentication
+- Regurlarly audit indexed content using search engine queries
+
+Mitigation controls should be validated to ensure sensitive resources remain inaccessible even if discovered.
+
+
+-----------
+
+
+## Conclusion
+
+The application permits unrestricted search engine indexing of internal and functional endpoints, leading to unnecessary disclosure of application structure and behavior. Proper index controls and access restrictions are required to limit reconnaissance opportunities.
