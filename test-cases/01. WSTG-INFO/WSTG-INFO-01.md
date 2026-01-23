@@ -63,8 +63,12 @@ The test involves:
     <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/321f0767-e2df-4abf-b696-49a74740e7b8" />
 
 
+-----------
 
-3. Search for sensitive file types:
+
+2. Search for sensitive file types:
+
+   Searching for file extensions commonly associated with backups or development.
 
    ``` site:testphp.vulnweb.com filetype:php```
 
@@ -84,3 +88,77 @@ The test involves:
    <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/f91a2cd4-f698-44b1-a190-de6343ba42ac" />
 
 
+
+--------------
+
+
+3. Identify Functional Entry Points
+
+   ``` site:testphp.vulnweb.com inurl:login ```
+
+
+   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/f4d26815-0e14-4559-b227-fd9efb6cc615" />
+
+
+   ``` site:testphp.vulnweb.com inurl:signup ```
+
+
+   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/8062d7ff-6698-45b0-a00d-a996ba1a9ffc" />
+
+
+   ``` site:testphp.vulnweb.com inurl:id= ```
+
+
+   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/5cf3e9b6-6271-4361-943c-b11eeeb466e9" />
+
+   
+
+   These queries help identify:
+
+   - Authentication-related endpoints
+   - Business logic parameters
+   - Direct object references
+
+
+----------------
+
+
+### Validating Live Accessibility
+
+On manually visiting selected indexed URLs in the browser confirmed that:
+
+- The resource is accessible without authentication
+- The content matches with what was indexed
+- The endpoint is functional and not deprecated
+
+   > <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/93897491-bf99-4b94-a888-4df63daabcb2" />
+
+
+
+   > <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/869aaddd-f287-4596-9fda-369710bae41a" />
+
+
+
+   > <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/6d087d9c-9727-4c5e-b75c-7f46478d10b7" />
+
+
+
+------------
+
+
+## Evidence
+
+The following evidence was collected during testing:
+
+- Indexed URLs revealing internal application endpoints
+- Parameterized pages indexed by search engines
+- Public access to functional pages without authentication
+
+------
+
+
+## Result
+
+**VULNERABLE**
+
+Search engine indexing reveals multiple internal and functional endpoints
