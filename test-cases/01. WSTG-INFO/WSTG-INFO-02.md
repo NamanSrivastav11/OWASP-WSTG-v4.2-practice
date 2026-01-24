@@ -14,7 +14,7 @@ This test focuses on **passive and low-noise techniques** to fingerprint the ser
 -------
 
 
-[OWASP-WSTG-INFO-01: Reference](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/01-Information_Gathering/01-Conduct_Search_Engine_Discovery_Reconnaissance_for_Information_Leakage)
+[OWASP-WSTG-INFO-02: Reference](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/01-Information_Gathering/02-Fingerprint_Web_Server)
 
 
 -------
@@ -26,42 +26,40 @@ Target Application: testphp.vulnweb.com
 Authentication: Not required
 Tools Used:
 
-- Search engines (Google, Bing)
-- Browser
+- Web browse
+- Intercepting proxy (Burp Suite)
 
 --------
 
 
+## Background
+
+Web servers often disclose identifying information throug HTTP headers, error messages, default pages, or TLS configurations. This information can reveal:
+
+
+- Web server software (Apache, Nginx, IIS, etc.)
+- Version numbers
+- Underlying operating systems
+- Enables modules or extensions
+
+While server fingeprinting does not constitute a vulnerability, **detailed version disclosure significantly reduces attacker efforts** by enabling rsearch and exploit targeting.
+
+
+---------
+
 ## Test Methodology
 
-Search engine reconnaissance focuses on discovering information that the application owner did not intend to make public but is accessible due to improper indexing or exposure.
-
-
-The test involves:
-
-- Using targeted search queries [ Google Dorking ]
-- Identifying indexed resources, parameters, or sensitive content
-- Correlating findings with application behavior
-
+The test is performed using passive and low-interaction techniques. The methodology prioritizes observing default server behavior rather than manipulating server state.
 
 --------
 
 
 ## Validation Steps
 
-1. Perform basic indexed search: Enumerate Intexed Content
-
-   ``` site:testphp.vulnweb.com ```
+### Step 1 - Intercept HTTP Response Headers
 
 
-   <img width="731" height="357" alt="image" src="https://github.com/user-attachments/assets/588734ef-9f36-4f28-8f76-8b8014000fc3" />
-
-
-   This gives us all the indexed websites that contain the domain name `testphp.vulnweb.com`
-
-
-    <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/321f0767-e2df-4abf-b696-49a74740e7b8" />
-
+With Burp Proxy enabled, 
 
 -----------
 
