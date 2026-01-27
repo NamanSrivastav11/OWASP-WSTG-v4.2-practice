@@ -148,21 +148,20 @@ Example indicators of concern:
 
 ### Validating Live Accessibility
 
-On manually visiting selected indexed URLs in the browser confirmed that:
+On manually visiting one the URLs revealed inside the `/.well-known/security.txt` file
+
+
+<img width="484" height="171" alt="image" src="https://github.com/user-attachments/assets/3fd8b42e-35a6-4388-a46d-a2be7a481ad9" />
+
+
+- Access the path directly in the browser
+
+  > <img width="1555" height="1039" alt="image" src="https://github.com/user-attachments/assets/73e846de-7389-4ac3-a87d-5de89149c467" />
+
+
 
 - The resource is accessible without authentication
-- The content matches with what was indexed
-- The endpoint is functional and not deprecated
-
-   > <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/93897491-bf99-4b94-a888-4df63daabcb2" />
-
-
-
-   > <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/869aaddd-f287-4596-9fda-369710bae41a" />
-
-
-
-   > <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/6d087d9c-9727-4c5e-b75c-7f46478d10b7" />
+- The endpoint is functional
 
 
 
@@ -173,9 +172,9 @@ On manually visiting selected indexed URLs in the browser confirmed that:
 
 The following evidence was collected during testing:
 
-- Indexed URLs revealing internal application endpoints
-- Parameterized pages indexed by search engines
-- Public access to functional pages without authentication
+- HTTP requests and responses for metafiles
+- Contents of accessible metafiles
+- Direct access attemps to disclosed pathss
 
 ------
 
@@ -184,7 +183,7 @@ The following evidence was collected during testing:
 
 **VULNERABLE**
 
-Search engine indexing reveals multiple internal and functional endpoints, including parameterized URLs that expose application structure and logic. This information is accessible without authentication and requires no direct interaction with the application.
+The application exposes webserver metafiles that disclose internal paths and functional endpoints. Several of these paths are accessible without authentication, providing unnecessary insight into application structure.
 
 
 -----------
@@ -192,12 +191,10 @@ Search engine indexing reveals multiple internal and functional endpoints, inclu
 
 ## Impact
 
-While search engine discovery does not directly compromise the application, it significantly enhances an attacker's ability to :
+Information disclosed through metafiles can:
 
-- Map application functionality quickly
-- Identify attack verctors without active probing
-- Discover legacy or hidden endpoints
-- Chain with authentication, authorization, or input validation flaws
+- Reveal hidden or sensitive functionality
+- Reduce effort required for attack surface mapping
 
 This exposure lowers the overall security posture of the application.
 
