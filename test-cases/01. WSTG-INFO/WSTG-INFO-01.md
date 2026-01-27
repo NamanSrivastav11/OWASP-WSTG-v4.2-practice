@@ -22,8 +22,12 @@ The goal is to determine wheter publicly indexed contect reveals information tha
 
 ## Test Environment
 
-Target Application: testphp.vulnweb.com
+Target Application: `testphp.vulnweb.com`
+
+
 Authentication: Not required
+
+
 Tools Used:
 
 - Search engines (Google, Bing)
