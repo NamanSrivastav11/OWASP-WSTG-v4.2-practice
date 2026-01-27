@@ -27,7 +27,7 @@ Authentication: Not required
 Tools Used:
 
 - Web browse
-- Intercepting proxy (Burp Suite)
+- Intercepting proxy and repeater (Burp Suite)
 
 --------
 
@@ -59,85 +59,64 @@ The test is performed using passive and low-interaction techniques. The methodol
 ### Step 1 - Intercept HTTP Response Headers
 
 
-With Burp Proxy enabled, 
+With Burp Proxy enabled, intercept a standard request to the application:
+
+**Request**
+```
+GET / HTTP/1.1
+Host: testphp.vulnweb.com
+Cache-Control: max-age=0
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+Accept-Encoding: gzip, deflate, br
+Accept-Language: en-US,en;q=0.9
+Connection: keep-alive
+```
+
+Analyze the HTTP response headers for server identification, including but not limited to:
+
+- `Server`
+- `X-Powered-By`
+- Framework
+
+
+Findings:
+
+<img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/d12d95a1-6579-4c54-b55e-346b2a78bcdc" />
+
+- Server software is disclosed
+- Version numbers are revealed
+
 
 -----------
 
 
-2. Search for sensitive file types:
+2. Analyzing Error Responses
 
-   Searching for file extensions commonly associated with backups or development.
+   Request a non-existent resource while interception is enabled
 
-   ``` site:testphp.vulnweb.com filetype:php```
+   **Request**
+   ```
+   GET / HTTES/1.1
+   Host: testphp.vulnweb.com
+   Cache-Control: max-age=0
+   Upgrade-Insecure-Requests: 1
+   User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36
+   Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+   Accept-Encoding: gzip, deflate, br
+   Accept-Language: en-US,en;q=0.9
+   Connection: keep-alive
 
+   ```
 
-   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/9abcaee8-300a-455b-a78e-3a9e47d12dc5" />
+   Review the response body and headers for:
 
-   
-   ```site:testphp.vulnweb.com filetype:bak```
+   - Default error page signatures
+   - Platform-specific error formatting
+     
 
-
-   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/26729f56-e48a-4be1-9d55-a71747e663fe" />
-
-
-   ```site:testphp.vulnweb.com filetype:txt```
-
-
-   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/f91a2cd4-f698-44b1-a190-de6343ba42ac" />
-
-
-
---------------
-
-
-3. Identify Functional Entry Points
-
-   ``` site:testphp.vulnweb.com inurl:login ```
-
-
-   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/f4d26815-0e14-4559-b227-fd9efb6cc615" />
-
-
-   ``` site:testphp.vulnweb.com inurl:signup ```
-
-
-   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/8062d7ff-6698-45b0-a00d-a996ba1a9ffc" />
-
-
-   ``` site:testphp.vulnweb.com inurl:id= ```
-
-
-   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/5cf3e9b6-6271-4361-943c-b11eeeb466e9" />
-
-   
-
-   These queries help identify:
-
-   - Authentication-related endpoints
-   - Business logic parameters
-   - Direct object references
-
-
-----------------
-
-
-### Validating Live Accessibility
-
-On manually visiting selected indexed URLs in the browser confirmed that:
-
-- The resource is accessible without authentication
-- The content matches with what was indexed
-- The endpoint is functional and not deprecated
-
-   > <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/93897491-bf99-4b94-a888-4df63daabcb2" />
-
-
-
-   > <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/869aaddd-f287-4596-9fda-369710bae41a" />
-
-
-
-   > <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/6d087d9c-9727-4c5e-b75c-7f46478d10b7" />
+   <img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/74c08cc1-c30b-4d9b-a81a-9b76fc0dc57a" />
 
 
 
@@ -148,9 +127,9 @@ On manually visiting selected indexed URLs in the browser confirmed that:
 
 The following evidence was collected during testing:
 
-- Indexed URLs revealing internal application endpoints
-- Parameterized pages indexed by search engines
-- Public access to functional pages without authentication
+- HTTP response headers captured via Burp Proxy
+- Error responses revealing server characteristics
+
 
 ------
 
@@ -159,7 +138,7 @@ The following evidence was collected during testing:
 
 **VULNERABLE**
 
-Search engine indexing reveals multiple internal and functional endpoints, including parameterized URLs that expose application structure and logic. This information is accessible without authentication and requires no direct interaction with the application.
+The web server discloses identifying information through HTTP response headers and error handling behavior. This confirms that the server can be reliably fingerprinted by an external attacker.
 
 
 -----------
@@ -167,14 +146,15 @@ Search engine indexing reveals multiple internal and functional endpoints, inclu
 
 ## Impact
 
-While search engine discovery does not directly compromise the application, it significantly enhances an attacker's ability to :
+Server fingerprinting enables attackers to:
 
-- Map application functionality quickly
-- Identify attack verctors without active probing
-- Discover legacy or hidden endpoints
-- Chain with authentication, authorization, or input validation flaws
+- Identify server software and technologies in use
+- Research known vulnerabilities for specific versions
+- Tailor attack payloads and exploitation techniques
+- Reduce reconnaissance time and noise
 
-This exposure lowers the overall security posture of the application.
+
+While not directly exploitable on its own, this information disclosure weakens the overall security posture of the application.
 
 
 -----------
@@ -182,15 +162,13 @@ This exposure lowers the overall security posture of the application.
 
 ## Mitigation
 
-To reduce exposure through search engine indexing:
+To reduce server fingerprinting exposure:
 
-- Restrict indexing of non-public resources using `robots.txt`
-- Apply `noindex`, `nofollow` directives to sensitive pages
-- Remove or restrict access to unused legacy, or test endpoints
-- Ensure administrative and sensitive functionality requires authentication
-- Regurlarly audit indexed content using search engine queries
-
-Mitigation controls should be validated to ensure sensitive resources remain inaccessible even if discovered.
+- Remove or obfuscate server identification headers such as `Server` and `X-Powered-By`
+- Configure custom error pages that do not discloses server or framework details
+- Ensure consistent headers behavior across all responses
+- Regularly review externally available intelligence sources (e.g., Shodan) for unintended disclosures
+- Validate mitigations by re-testing headers and error responses after changes
 
 
 -----------
@@ -198,4 +176,4 @@ Mitigation controls should be validated to ensure sensitive resources remain ina
 
 ## Conclusion
 
-The application permits unrestricted search engine indexing of internal and functional endpoints, leading to unnecessary disclosure of application structure and behavior. Proper index controls and access restrictions are required to limit reconnaissance opportunities.
+The application's web server exposes identifying information through default HTTP headers and error responses, allowing reliable fingerprinting of the underlying technology stack.
