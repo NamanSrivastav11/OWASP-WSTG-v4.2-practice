@@ -57,7 +57,7 @@ The methodology consists of:
 3. Validating whether disclosed paths are accessible or relevant
 4. Correlating findings with actual application behavior
 
-No nrute forcing or directory enumeration is performed.
+No brute forcing or directory enumeration is performed.
 
 
 --------
@@ -125,32 +125,22 @@ Example indicators of concern:
 --------------
 
 
-3. Identify Functional Entry Points
+3. Analyzing **Security TXT** file and **Humans TXT** file
 
-   ``` site:testphp.vulnweb.com inurl:login ```
+   Inside Burp Repeater, modify the request to  `GET /.well-known/security.txt HTTP/1.1` and send the request
 
-
-   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/f4d26815-0e14-4559-b227-fd9efb6cc615" />
-
-
-   ``` site:testphp.vulnweb.com inurl:signup ```
+   <img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/7b95b75a-466a-4a3f-ab81-b608baccdf9b" />
 
 
-   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/8062d7ff-6698-45b0-a00d-a996ba1a9ffc" />
+
+   Now, to view the `.humans.txt` file, modify the request as follows:
+
+   `GET / HTTP/1.1` -> `GET /humans.txt HTTP/1.1`
+
+   After that send the request and observe the response
 
 
-   ``` site:testphp.vulnweb.com inurl:id= ```
-
-
-   <img width="1610" height="1046" alt="image" src="https://github.com/user-attachments/assets/5cf3e9b6-6271-4361-943c-b11eeeb466e9" />
-
-   
-
-   These queries help identify:
-
-   - Authentication-related endpoints
-   - Business logic parameters
-   - Direct object references
+   <img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/94500973-0406-47fe-85bc-9f2e2e2a41e2" />
 
 
 ----------------
