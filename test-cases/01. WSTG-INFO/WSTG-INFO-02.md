@@ -22,8 +22,12 @@ This test focuses on **passive and low-noise techniques** to fingerprint the ser
 
 ## Test Environment
 
-Target Application: testphp.vulnweb.com
+Target Application: `testphp.vulnweb.com`
+
+
 Authentication: Not required
+
+
 Tools Used:
 
 - Web browse
