@@ -204,15 +204,17 @@ This exposure lowers the overall security posture of the application.
 
 ## Mitigation
 
+
 To reduce exposure through search engine indexing:
 
-- Restrict indexing of non-public resources using `robots.txt`
-- Apply `noindex`, `nofollow` directives to sensitive pages
-- Remove or restrict access to unused legacy, or test endpoints
-- Ensure administrative and sensitive functionality requires authentication
-- Regurlarly audit indexed content using search engine queries
+- Avoid listing sensitive or internal paths in `robots.txt`
+- Restrict access to administrative or non-public endpoints regardless of indexing.
+- Remove obsolete or unused entries from sitemap files.
+- Serve minimal or generic metafile content where possible
+- Regurlarly review metafiles as part of deployment and security reviews.
 
-Mitigation controls should be validated to ensure sensitive resources remain inaccessible even if discovered.
+
+Mitigation must be validated by re-accessing metafiles and confirming the absence of sensitive desclosures.
 
 
 -----------
@@ -220,4 +222,4 @@ Mitigation controls should be validated to ensure sensitive resources remain ina
 
 ## Conclusion
 
-The application permits unrestricted search engine indexing of internal and functional endpoints, leading to unnecessary disclosure of application structure and behavior. Proper index controls and access restrictions are required to limit reconnaissance opportunities.
+The application exposes webserver metafiles that disclose internal paths and functional details. This information is publicly accessible and can be leveraged during reconnaissance to accelerate targeted attacks.
