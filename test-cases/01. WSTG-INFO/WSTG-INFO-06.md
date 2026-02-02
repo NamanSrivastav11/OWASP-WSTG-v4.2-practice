@@ -97,31 +97,44 @@ Each unique URL and request represents a potential application entry point.
 -----------
 
 
-### Step 2 - Enumerate Parameters
+### Step 2 - Discovering Application Contexts
 
-   Request a non-existent resource while interception is enabled
+Try to navigate to `http://testphp.vulnweb.com/AJAX`
 
-   **Request**
-   ```
-   GET / HTTES/1.1
-   Host: testphp.vulnweb.com
-   Cache-Control: max-age=0
-   Upgrade-Insecure-Requests: 1
-   User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36
-   Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
-   Accept-Encoding: gzip, deflate, br
-   Accept-Language: en-US,en;q=0.9
-   Connection: keep-alive
+<img width="706" height="715" alt="image" src="https://github.com/user-attachments/assets/170d7412-fd13-46a1-aa20-4be4f7516675" />
 
-   ```
+`/AJAX` loads successfully.
 
-   Review the response body and headers for:
+<img width="1353" height="321" alt="image" src="https://github.com/user-attachments/assets/b54e4475-836d-40cc-89a2-9f1bddf069e4" />
 
-   - Default error page signatures
-   - Platform-specific error formatting
-     
 
-   <img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/74c08cc1-c30b-4d9b-a81a-9b76fc0dc57a" />
+This proves:
+
+- A distinct application context exists
+- AJAX-specific endpoints are exposed
+- Client-side driven entry points are accessible directly
+
+Now, once `/AJAX` is accessible, browse `/AJAX` with Burp enabled and observe:
+
+- API-style endpoints
+- Parameters in POST/GET bodies
+
+Navigate to `artists` -> `lyzae` (open any artist info and intercept the request inside Burp Repeater)
+
+<img width="1235" height="732" alt="image" src="https://github.com/user-attachments/assets/aa3e11db-29e7-4e48-a7a0-d5afb7d39adc" />
+
+
+<img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/47b2b061-0211-48b0-96c3-eea52d61f6c3" />
+
+Similarly, browse the application to look for additional access points:
+
+<img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/ce1099d0-30b5-4661-bd96-c547fa9110a6" />
+
+
+<img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/a8bd0a0f-2fef-4b16-b9e1-f0892f09bd9a" />
+
+
+<img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/657fd0f4-9af1-4f95-b33f-f38e1b32bcea" />
 
 
 
