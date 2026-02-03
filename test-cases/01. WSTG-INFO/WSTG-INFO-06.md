@@ -145,8 +145,9 @@ Similarly, browse the application to look for additional access points:
 
 The following evidence was collected during testing:
 
-- HTTP response headers captured via Burp Proxy
-- Error responses revealing server characteristics
+- Burp Proxy traffic captures showing GET/POST requests and parameters
+- Application context discovery of `/AJAX` and related API-style endpoints
+- Observed requests inputs across query strings, body parameters, and client-driven routes
 
 
 ------
@@ -154,9 +155,9 @@ The following evidence was collected during testing:
 
 ## Result
 
-**VULNERABLE**
+** NOT VULNERABLE**
 
-The web server discloses identifying information through HTTP response headers and error handling behavior. This confirms that the server can be reliably fingerprinted by an external attacker.
+This test case focuses on enumerating entry points rather than confirming a security flaw. The application's entry points were successfully identified across multiple contexts and HTTP methods, enabling informed follow-up testing.
 
 
 -----------
@@ -164,15 +165,14 @@ The web server discloses identifying information through HTTP response headers a
 
 ## Impact
 
-Server fingerprinting enables attackers to:
+Accurately identifying entry points enables testers and attackers to:
 
-- Identify server software and technologies in use
-- Research known vulnerabilities for specific versions
-- Tailor attack payloads and exploitation techniques
-- Reduce reconnaissance time and noise
+- Map the full attack surface for authentication, authorization, and input validation testing
+- Identify hidden routes, parameters, and client-side endpoints
+- Prioritize deeper testing on high-risk inputs and exposed functionality
 
 
-While not directly exploitable on its own, this information disclosure weakens the overall security posture of the application.
+While not a vulnerability itself, incomplete entry point discovery can result in missed findings and a false sense of security.
 
 
 -----------
@@ -180,13 +180,13 @@ While not directly exploitable on its own, this information disclosure weakens t
 
 ## Mitigation
 
-To reduce server fingerprinting exposure:
+To reduce exposure of unnecessary entry points:
 
-- Remove or obfuscate server identification headers such as `Server` and `X-Powered-By`
-- Configure custom error pages that do not discloses server or framework details
-- Ensure consistent headers behavior across all responses
-- Regularly review externally available intelligence sources (e.g., Shodan) for unintended disclosures
-- Validate mitigations by re-testing headers and error responses after changes
+- Minimize publicly accessible endpoints and disable unused routes
+- Enforce strict input validation and allowlists on all parameters
+- Require authentication on sensitive or administrative paths
+- Document and monitor all exposed endpoints via API inventories or asset management
+- Validate by regularly reviewing traffic logs and automated discovery output
 
 
 -----------
@@ -194,4 +194,4 @@ To reduce server fingerprinting exposure:
 
 ## Conclusion
 
-The application's web server exposes identifying information through default HTTP headers and error responses, allowing reliable fingerprinting of the underlying technology stack.
+Entry points across traditional web pages and AJAX-driven contexts were identified, providing a clear map of inputs for subsequent security teting. No direct vulnerability was confirmed in this.
