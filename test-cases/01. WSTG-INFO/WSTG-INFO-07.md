@@ -29,7 +29,7 @@ Authentication: Not required
 Tools used:
 
 - Web browser
-- Burp Suite (Proxy, Target -> Site Map, Repeater)
+- OWASP ZAP (Automated Scan with Spider, Site Tree, History, Manual Request Editor)
 
 
 -------------
@@ -64,67 +64,108 @@ This test case focuses on understanding the paths users can take, not on exploit
 ## Validation Steps
 
 
-### Step 1 - Identify Primary Navigation Flow
+### Step 1 - Configure ZAP Automated Scan (Spider)
 
 
-Browse the application from the landing page and note the main user paths:
+Launch OWASP ZAP and use **Automated Scan** to target `http://testphp.vulnweb.com`. 
+Enable the **Spider** during the scan to crawl the application and discover execution paths.
 
+<img width="1626" height="478" alt="image" src="https://github.com/user-attachments/assets/63c79ae2-b02f-4045-9219-e29f93cfedbb" />
+
+
+URL to attack - `http.testphp.vulnweb.com` -> Start the attack.
+
+Alternatively, 
+Go to **Tools** -> Select **Spider**
+
+
+<img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/75e30208-2950-4618-8a95-fafd381560f0" />
+
+
+The Spider menu will appear
+
+<img width="863" height="554" alt="image" src="https://github.com/user-attachments/assets/b8b94e81-b7c6-40a8-b9cb-e27bb7ca6b12" />
+
+
+Type in the target site - `http.testphp.vulnweb.com` and Start the scan
+
+<img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/3ca03777-0277-4ec9-8a00-bb2dad93daca" />
+
+Once the scan is completed, this establishes the baseline execution flow discovered through automated crawling.
+
+
+-------------------
+
+
+### Step 2 - Validate Primary Navigation Flow in Sites Tree
+
+
+Use the **Sites Tree** and **History** tabs to trace to primary navigation paths captured by the spider:
 
 - Home page -> Category listing -> Product details
 - Search -> Results -> Product details
 - Login -> Authenticated pages -> Logout
 
 
-
-Capture each request in Burp Proxy and map the sequence in the site map. This establishes the main execution flow of typical user activity.
-
-
-<img width="1369" height="927" alt="image" src="https://github.com/user-attachments/assets/5634939d-ba32-41ce-bcb5-6112fef6eb9a" />
+<img width="547" height="973" alt="image" src="https://github.com/user-attachments/assets/fe150d71-a580-490e-8c3c-7aa82a467b77" />
 
 
-Visiting the `Categories` tab -> Open the `Paintings` product details.
+<img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/95e3ddde-4301-4320-b6a9-68a8e14b5fe0" />
 
-
-<img width="1369" height="927" alt="image" src="https://github.com/user-attachments/assets/82ed2c40-ad9a-44c2-8bf2-73178094cf8e" />
-
-
-<img width="1369" height="927" alt="image" src="https://github.com/user-attachments/assets/c986ac9e-060a-45d7-a58d-bca536b397cc" />
-
-
-Now, capture this request inside Burp Proxy
-
-
-<img width="1585" height="980" alt="image" src="https://github.com/user-attachments/assets/8167bbce-c004-484b-8c3b-900fc96546e2" />
-
-
-<img width="1585" height="980" alt="image" src="https://github.com/user-attachments/assets/35fa5d76-fcf8-4219-8b73-46c719a30440" />
-
-
--------------------
-
-
-### Similarly, browse via the Search box
-
-
-<img width="1371" height="927" alt="image" src="https://github.com/user-attachments/assets/7c140504-196f-4a98-b1a0-e8c8cae951d0" />
-
-Type in a keyword `hi` and observe the result
-
-<img width="524" height="213" alt="image" src="https://github.com/user-attachments/assets/c146c4f8-59a1-4a3c-8458-eb051a9d7403" />
-
-
-The application searched for `hi` and displayed a product from category `Paintings`
-
-
-<img width="1369" height="927" alt="image" src="https://github.com/user-attachments/assets/bf893fdb-6d54-4e86-b9a6-38693e547a20" />
-
-
--------------------
 
 
 -------------
 
 
-### Step 2 - Trace Multi-step Workflows
+## EVIDENCE
 
-Follow a multi-step action such as 
+The following evidence was collected during testing:
+
+- ZAP Automated Scan results with Spider-discovered paths in the Sites Tree
+- Captured request sequences for search and product navigation
+- Spider was able to map various execution paths throughout the application
+
+
+------------
+
+
+## Result
+
+**Not Vulnerable**
+
+The execution paths were successfully mapped and documented. No direct vulnerability was confirmed in this test case, as the goal was to understand application flow rather than exploit it.
+
+
+-------------
+
+
+## Impact
+
+Mapping execution paths enables testers to:
+
+- Target workflow-dependent logic and authorization controls
+- Identify where users might skip steps or access restricted areas
+- Detect inconsistent behavior based on request order
+
+Without this map, critical business logic flaws can be overlooked.
+
+
+--------------
+
+
+## Mitigation
+
+To reduce risk from complex execution paths:
+
+- Enforce server-side workflow validation for multi-step actions
+- Ensure sensitive functionality cannot be accessed out of sequence
+- Apply consistent authorization checks across all routes
+- Log and monitor unexpected request sequences
+
+
+---------------
+
+
+## Conclusion
+
+The application's main execution paths were mapped across navigation, search, and user actions. This provides a baseline for deeper security testing focused on workflow integrity and authorization controls.
