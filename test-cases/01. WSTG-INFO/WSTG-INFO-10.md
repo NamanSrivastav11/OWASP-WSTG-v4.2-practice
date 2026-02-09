@@ -112,5 +112,5 @@ Without architectural mapping, critical attack paths may be missed.
 
 ## Conclusion
 
-The application's architecture, request flow, and trust boundaries were mapped using observed behavior and passive directory. 
+The application's architecture, request flow, and trust boundaries were mapped using observed behavior and passive discovery. This provides a foundation for focused testing of authorization, input handling, and business logic controls.
 
