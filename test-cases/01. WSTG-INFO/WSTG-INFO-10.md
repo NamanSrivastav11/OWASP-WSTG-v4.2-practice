@@ -62,9 +62,7 @@ This test case focuses on structural mapping rather than exploitation.
 -------------
 
 
-## Validation Steps
-
-### Step 1 - Enumerate Functional Areas with ZAP Spider
+## Enumerate Functional Areas with ZAP Spider
 
 Run OWASP ZAP Spider against the target and review discovered paths in **Sites Tree**. Group discovered endpoints by purpose (content pages, search, authentication, cart, user actions).
 
@@ -80,5 +78,39 @@ Grouped functional paths:
 --------------
 
 
-### Step 2 - Infer Application Tiers from Traffic Patterns
+### Evidence
+
+The following evidence was collected during testing:
+
+- ZAP Sites Tree output showing the discovered application surface
+
+-------------
+
+## Impact
+
+Architecture mapping enables testers to:
+
+- Prioritize high-risk components and trust boundaries
+- Focus deeper tests on security-critical data flows
+- Detect design weaknesses in segmentation or control placement
+
+Without architectural mapping, critical attack paths may be missed.
+
+-------------
+
+
+## Mitigation
+
+- Enforce security controls consistently across all layers
+- Segment internal services and restrict trust between components
+- Minimize unnecessary third-party dependencies
+- Maintain up-to-date architecture and flow documentation
+
+
+-----------
+
+
+## Conclusion
+
+The application's architecture, request flow, and trust boundaries were mapped using observed behavior and passive directory. 
 
