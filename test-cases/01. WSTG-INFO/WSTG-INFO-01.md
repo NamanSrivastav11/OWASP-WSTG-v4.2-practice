@@ -30,8 +30,8 @@ Authentication: Not required
 
 Tools Used:
 
-- Search engines (Google, Bing)
-- Browser
+- Web Browser
+- Search Engines (Google/Bing)
 
 --------
 
