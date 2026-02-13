@@ -21,7 +21,7 @@ The goal is to identify platform-level weaknesses that can increase attack surfa
 
 ## Test Environment
 
-Target Application: `testphp.vulnweb.com`
+Target Application: `demo.testfire.net`
 
 Authentication: Not required
 
@@ -64,30 +64,41 @@ This test case focuses on identifying those platform-level weaknesses through sa
 
 ## Validation Steps
 
-### Step 1 - Configure ZAP Automated Scan (Spider)
-
-Launch OWASP ZAP and use **Automated Scan** to target `http://testphp.vulnweb.com`.
-Enable the **Spider** during the scan to crawl the application and discover execution paths.
-
-After the spider completes, review the discovered nodes in the **Sites Tree**.
-
-<img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/d99a20ae-d08e-471e-9c1c-1659a94f282b" />
-
-- Set the URL to attack as:  `http://testphp.vulnweb.com`
-- Check the `Use traditional spider` option
-- (Optional - `Use the AJAX Spider` to map the `/AJAX` endpoints as well if any found)
-
-Once done, click on **Attack**
-
-<img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/c541d3d5-c70d-469a-8b05-1404e9506ca1" />
-
 
 ### Step 1 - Review Server Metadata Exposure
 
-Capture responses in OWASP ZAP **History** and inspect for platform-revealing headers such as:
+Capture responses from `https://demo.testfire.net` in OWASP ZAP **History** and inspect for platform-revealing headers such as:
 
 - `Server`
 - `X-Powered-By`
 - Framework/runtime-specific headers
 
-We can check whether version numbers or technology details 
+We can check whether version numbers or technology details are unnecessarily exposed.
+
+Request:
+
+  <img width="1511" height="1018" alt="image" src="https://github.com/user-attachments/assets/24a76a79-1e9e-4409-8f19-b2d5c3b319c6" />
+
+
+Response:
+
+  <img width="1512" height="1018" alt="image" src="https://github.com/user-attachments/assets/8c0f55b6-e785-4998-bb27-78ff10c82e81" />
+
+
+The Captured response header shows the server/platform metadata.
+
+
+-------------
+
+
+### Step 2 - Check HTTP Method Configuration
+
+Use `curl` to check whether unnecessary methods are enabled:
+
+- Send an `OPTIONS` request to key endpoints
+- Observe allowed methods in `Allow` headers
+- Look for if any risky methods (such as `TRACE`, `PUT`, `DELETE`) appear exposed without business need.
+
+Command: `curl -i -X OPTIONS https://demo.testfire.net/`
+
+<img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/b19043ac-b5a8-427d-a669-921bafa3a920" />
