@@ -120,7 +120,7 @@ We can test different endpoints to identify consistent or inconsistent HTTP meth
 curl -i -X OPTIONS https://demo.testfire.net/
 curl -i -X OPTIONS https://demo.testfire.net/index.jsp
 curl -i -X OPTIONS https://demo.testfire.net/account/
-curl -i -X OPTIONS https://demo.testfire.net/transfer.jsp
+curl -i -X OPTIONS https://demo.testfire.net/feedback.jsp
 ```
 
 
@@ -128,3 +128,24 @@ Response for `curl -i -X OPTIONS https://demo.testfire.net/index.jsp`
 
 <img width="1166" height="569" alt="image" src="https://github.com/user-attachments/assets/fdf1366d-6666-4331-b2cb-a261394a9331" />
 
+**Findings:**
+1. The `Server:` header line (Shows Apache-Coyote)
+2. The `HTTP/1.1 200 OK` status
+3. `Allow:` header is not shown or missing
+4. The Set-Cookie information (shows Secure flags)
+
+
+Response for `curl -i -X OPTIONS https://demo.testfire.net/account/`
+
+<img width="718" height="171" alt="image" src="https://github.com/user-attachments/assets/6926db1c-dd3e-4e00-b4b9-ecdc49c21f73" />
+
+- Dangerous HTTP Methods Enabled:
+    - `PUT` method accessible - allows uploading/modifying account data
+    - `DELETE` method accessible - allows deleting account resources
+ 
+<img width="1153" height="628" alt="image" src="https://github.com/user-attachments/assets/8d25e039-a4e8-421d-b645-cb61dc608cdf" />
+
+<img width="1174" height="628" alt="image" src="https://github.com/user-attachments/assets/39646a12-2ce0-4110-a603-7670669f9a1a" />
+
+
+Similar HTTP methods were enabled for `/feedback.jsp` , `default.jsp` , `robots.txt` , `/swagger/index.html` as well.
