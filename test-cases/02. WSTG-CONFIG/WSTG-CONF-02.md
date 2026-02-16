@@ -98,7 +98,33 @@ Use `curl` to check whether unnecessary methods are enabled:
 - Send an `OPTIONS` request to key endpoints
 - Observe allowed methods in `Allow` headers
 - Look for if any risky methods (such as `TRACE`, `PUT`, `DELETE`) appear exposed without business need.
+  
+  > TRACE: Can expose request headers and sensitive data
+  > 
+  > PUT: Allows uploading/overwriting files
+  > 
+  > DELETE: Allows removing resources
 
 Command: `curl -i -X OPTIONS https://demo.testfire.net/`
 
 <img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/b19043ac-b5a8-427d-a669-921bafa3a920" />
+
+
+### Step 3 - Testing multiple endpoints for HTTP methods
+
+We can test different endpoints to identify consistent or inconsistent HTTP method restrictions:
+
+**Commands to run**
+
+```
+curl -i -X OPTIONS https://demo.testfire.net/
+curl -i -X OPTIONS https://demo.testfire.net/index.jsp
+curl -i -X OPTIONS https://demo.testfire.net/account/
+curl -i -X OPTIONS https://demo.testfire.net/transfer.jsp
+```
+
+
+Response for `curl -i -X OPTIONS https://demo.testfire.net/index.jsp`
+
+<img width="1166" height="569" alt="image" src="https://github.com/user-attachments/assets/fdf1366d-6666-4331-b2cb-a261394a9331" />
+
