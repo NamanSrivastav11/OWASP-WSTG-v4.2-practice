@@ -151,5 +151,51 @@ Response for `curl -i -X OPTIONS https://demo.testfire.net/account/`
 Similar HTTP methods were enabled for `/feedback.jsp` , `default.jsp` , `robots.txt` , `/swagger/index.html` as well.
 
 
+> *Meaning of different HTTP response codes:*
+>
+> HTTP 200 -> Success
+> 
+> HTTP 301/302 -> Redirect (check location header)
+> 
+> HTTP 400 -> Bad Request
+> 
+> HTTP 401 -> Unauthorized
+> 
+> HTTP 403 -> Forbidden
+> 
+> HTTP 404 -> Not Found
+> 
+> HTTP 405 -> Method Not Allowed
+> 
+> HTTP 500 -> Internal Server Error
+> 
+> HTTP 503 -> Service Unavailable
+> 
+>  - HTTP 200 response -> file/directory is accessible
+>  - HTTP 403 response -> restricted but exists
+>  - HTTP 404 response -> not found
+>    
 -------------
+
+
+### Step 5 - Analyze Response headers for Security Configuration
+
+
+We can inspect for common security headers in responses to assess platform hardening posture:
+
+**Headers that SHOULD be present:**
+
+- `Strict-Transport-Security:` - Forces HTTPS
+- `X-Content-Type-Options: nosniff` - Prevents Multipurpose Internet Mail Extension [MIME-sniffing]
+- `X-Frame-Options:` - Prevents clickjacking
+- `Content-Security-Policy:` - XSS protection
+- `Referrer-Policy:` - Controls referrer info
+- `Permissions-Policy:` - Restricts browser features
+
+
+**Headers that SHOULD not be present (may lead to information disclosure):**
+
+- `Server:` - Reveals web server and version
+- `X-Powered-By:` - Reveals framework/language
+
 
