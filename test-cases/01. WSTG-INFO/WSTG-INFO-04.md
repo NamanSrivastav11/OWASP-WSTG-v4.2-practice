@@ -6,14 +6,9 @@ Information Gathering
 
 ## Objective
 
-The objective of this test case is to identify all applications, virtual hosts, or functional contexts hosted on the same web server as the target application. The goal is to detemine whether additional applications or entry points are exposed that expand the overall attack surface.
+The objective of this test case is to identify all applications, directories, virtual hosts, and service contexts exposed by the target web server.
 
-This test case evaluates whether the server hosts:
-
-- Multiple applications under different paths
-- Legacy or test applications
-- Administrative or unused functionality
-- Misconfigured virtual hosts accessible via the same server
+The goal is to expand visibility beyond the primary application so hidden, legacy, admin, or test applications are included in the overall attack surface.
 
 
 -------
@@ -35,13 +30,24 @@ Authentication: Not required
 
 Tools Used:
 
-- Web browse
-- Intercepting proxy and repeater (Burp Suite)
+- Web browser
+- OWASP ZAP (Spider, Sties Tree, History)
+- DNS/host discovery tools (`nslookup`, `dig`)
+- Content discovery tools (wordlist-based, if authorized)
 
 --------
 
 
 ## Background
+
+A single web server may host multiple applications under different paths, hostnames, or ports. Security teams often test only the visible main app and miss:
+
+- Legacy or backup applications
+- Admin portals and internal tools
+- Alternate virtual hosts on the same IP
+- Dev/test/staging interfaces
+
+This test case focuses on mapping those additional applications so later security testing includes all reachable contexts.
 
 Web servers often disclose identifying information throug HTTP headers, error messages, default pages, or TLS configurations. This information can reveal:
 
