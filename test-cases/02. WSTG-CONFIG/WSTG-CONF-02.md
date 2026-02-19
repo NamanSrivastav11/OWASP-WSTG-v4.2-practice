@@ -151,8 +151,9 @@ Response for `curl -i -X OPTIONS https://demo.testfire.net/account/`
 Similar HTTP methods were enabled for `/feedback.jsp` , `default.jsp` , `robots.txt` , `/swagger/index.html` as well.
 
 
-> *Meaning of different HTTP response codes:*
->
+**Meaning of different HTTP response codes:**
+
+
 > HTTP 200 -> Success
 > 
 > HTTP 301/302 -> Redirect (check location header)
@@ -170,11 +171,13 @@ Similar HTTP methods were enabled for `/feedback.jsp` , `default.jsp` , `robots.
 > HTTP 500 -> Internal Server Error
 > 
 > HTTP 503 -> Service Unavailable
-> 
+
+
 >  - HTTP 200 response -> file/directory is accessible
 >  - HTTP 403 response -> restricted but exists
 >  - HTTP 404 response -> not found
->    
+
+
 -------------
 
 
@@ -199,3 +202,57 @@ We can inspect for common security headers in responses to assess platform harde
 - `X-Powered-By:` - Reveals framework/language
 
 
+--------------
+
+
+## Evidence
+
+The following eveidence was collected during testing:
+
+- Response headers showing platform/server metadata
+- HTTP method enumeration responses (`OPTIONS`/`Allow`)
+- Security header presence/absence observations
+
+
+---------------
+
+
+## Result
+
+**NOT VULNERABLE**
+
+No critical platform misconfiguration was confirmed in this baseline assessment.
+
+
+-----------------
+
+
+## Impact
+
+Insecure platform configuration can result in:
+
+- Increased reconnaissance value for attackers
+- Exploitation via unsafe HTTP methods or exposed defaults
+- Easier bypass or defensive controls due to weak header posture
+- Information leakage that accelerates targeted attacks
+
+
+--------------
+
+
+## Mitigation
+
+To imporve platform security posture:
+
+- Remove or minimize server/version disclosure headers
+- Disable unnecessary HTTP methods at server and application layer
+- Enforce a strong security header baseline
+- Standardize error handling to avoid internal information leakage
+
+
+-------------
+
+
+## Conclusion
+
+Application platform configuration was reviewed through metadata, method behavior, headers, and error responses.
