@@ -95,18 +95,18 @@ curl -i http://testphp.vulnweb.com/index.php.bak
 curl -i http://testphp.vulnweb.com/admin.php.old
 curl -i http://testphp.vulnweb.com/config.php~
 ```
-```
+```bash
 # Test for config files
 curl -i http://testphp.vulnweb.com/web.config
 curl -i http://testphp.vulnweb.com/app.config
 curl -i http://testphp.vulnweb.com/.env
 ```
-```
+```bash
 # Test for SQL files
 curl -i http://testphp.vulnweb.com/database.sql
 curl -i http://testphp.vulnweb.com/schema.sql
 ```
-```
+```bash
 # Test for certificate/key files
 curl -i http://testphp.vulnweb.com/private.key
 curl -i http://testphp.vulnweb.com/certificate.pem
@@ -138,5 +138,85 @@ curl -i http://testphp.vulnweb.com/certificate.pem
 
 
 -------------------------
+
+
+### Step 2 - Testing for Archive and Compressed File Extensions
+
+We can test for whether archive files are accessible and downloadable
+
+**Common Archive Extensions:**
+
+| Extension | Description |
+|-----------|-------------|
+| `.zip` | ZIP archive |
+| `.tar` | TAR archive |
+| `.gz`, `.tar.gz` | Gzip compressed files |
+| `.tgz` | Tar + Gzip |
+| `.rar` | RAR archive |
+| `.7z` | 7-Zip archive |
+| `.bak` | Backup files |
+| `.old` | Old versions |
+| `~` | Emacs backup files |
+| `.backup` | Backup designation |
+
+
+**Testing Commands:**
+
+```bash
+curl -i http://testphp.vulnweb.com/backup.zip
+curl -i http://testphp.vulnweb.com/website.tar.gz
+curl -i http://testphp.vulnweb.com/database.sql.gz
+```
+
+```bash
+curl -i http://testphp.vulnweb.com/application.bak
+curl -i http://testphp.vulnweb.com/config.old
+curl -i http://testphp.vulnweb.com/index.php~
+curl -i http://testphp.vulnweb.com/data.backup
+```
+
+<img width="680" height="1087" alt="image" src="https://github.com/user-attachments/assets/c7d05371-e378-4707-8197-4466b23aff89" />
+
+
+<img width="706" height="821" alt="image" src="https://github.com/user-attachments/assets/f0d6f738-92f9-47cc-85dc-34871330270b" />
+
+
+## Result
+
+| File Tested | HTTP Response | Finding |
+|------------|---------------|---------|
+| /backup.zip | 404 Not Found | Archive file not accessible |
+| /website.tar.gz | 404 Not Found | Compressed archive not accessible |
+| /database.sql.gz | 404 Not Found | Database backup not accessible |
+| /application.bak | 404 Not Found | Backup file not accessible |
+| /config.old | 404 Not Found | Old config not accessible |
+| /index.php~ | 404 Not Found | Editor backup not accessible |
+| /data.backup | 404 Not Found | Backup file not accessible |
+
+**Analysis:** 
+
+All tested archive and backup files returned 404 Not Found responses, indicating they are not present or publicly accessible on the web server. This is the **secure configuration** for a production environment.
+
+No backup or archive files accessible
+
+
+------------------
+
+
+### Step 3 - Testing for Document File Extensions
+
+Here we can check whether office documents and files are unnecessarily exposed
+
+**Some common document extensions:**
+
+| Extension | Description | Risk |
+|-----------|-------------|------|
+| `.txt` | Text files | May contain notes, credentials, data |
+| `.pdf` | PDF documents | May contain sensitive information |
+| `.docx`, `.doc` | Word documents | Configuration docs, notes |
+| `.xlsx`, `.xls` | Excel spreadsheets | Data dumps, financial info |
+| `.pptx`, `.ppt` | PowerPoint slides | Architecture info, credentials |
+| `.rtf` | Rich Text Format | Documentation |
+| `.odt`, `.ods` | OpenOffice documents | Similar to MS Office files |
 
 
