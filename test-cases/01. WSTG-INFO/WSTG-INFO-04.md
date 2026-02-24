@@ -6,13 +6,19 @@ Information Gathering
 
 ## Objective
 
-The objective of this test case is to identify all applications, directories, virtual hosts, and service contexts exposed by the target web server.
+The objective of this test case is to identify all applications, directories, virtual hosts, and functional contexts hosted on the same web server as the target application. The goal is to determine whether additional applications or entry points are exposed that expand the overall attack surface.
 
-The goal is to expand visibility beyond the primary application so hidden, legacy, admin, or test applications are included in the overall attack surface.
+This test case evaluates whether the server hosts:
+
+- Multiple applications under different paths
+- Legacy or test applications
+- Administrative or unised functionality
+- Misconfigured virtual hosts accessible via the same server
 
 
 -------
 
+## Reference
 
 [OWASP-WSTG-INFO-04: Reference](https://owasp.org/www-project-web-security-testing-guide/v42/4-Web_Application_Security_Testing/01-Information_Gathering/04-Enumerate_Applications_on_Webserver)
 
@@ -32,8 +38,8 @@ Tools Used:
 
 - Web browser
 - OWASP ZAP (Spider, Sties Tree, History)
+- Directory enumeration (OWASP ZAP)
 - DNS/host discovery tools (`nslookup`, `dig`)
-- Content discovery tools (wordlist-based, if authorized)
 
 --------
 
@@ -64,46 +70,93 @@ While server fingeprinting does not constitute a vulnerability, **detailed versi
 
 ## Test Methodology
 
-The test is performed using passive and low-interaction techniques. The methodology prioritizes observing default server behavior rather than manipulating server state.
+The test is performed using using both passive and active reconnaissance techniques:
+
+1. **Passive enumeration**: DNS queries, web archives
+2. **Active enumeration**: Directory brute-forcing, HTTP method discovery, and common paths
+3. **Response analysis**: Examining HTTP response characteristics to identify application types
 
 --------
 
 
 ## Validation Steps
 
-### Step 1 - Intercept HTTP Response Headers
+### Step 1 - Enumerate Common Application Paths
+
+Here we will try to identify the applications hosted in common directories on the web server.
+
+Testing Commands -> 
+
+1. Test common admin paths
+   
+   ```bash
+   curl -i http://testphp.vulnweb.com/admin
+   ```
+
+   <img width="875" height="283" alt="image" src="https://github.com/user-attachments/assets/2e4b04c0-75fe-4b23-8a21-6da4631b1c40" />
 
 
-With Burp Proxy enabled, intercept a standard request to the application:
 
-**Request**
-```
-GET / HTTP/1.1
-Host: testphp.vulnweb.com
-Cache-Control: max-age=0
-Upgrade-Insecure-Requests: 1
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
-Accept-Encoding: gzip, deflate, br
-Accept-Language: en-US,en;q=0.9
-Connection: keep-alive
-```
-
-Analyze the HTTP response headers for server identification, including but not limited to:
-
-- `Server`
-- `X-Powered-By`
-- Framework
+   ```bash
+   curl -i http://testphp.vulnweb.com/administrator
+   ```
+   
+   <img width="885" height="265" alt="image" src="https://github.com/user-attachments/assets/d54f5939-5b85-4491-8266-ecb47659705f" />
 
 
-Findings:
 
-<img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/d12d95a1-6579-4c54-b55e-346b2a78bcdc" />
+   ```bash
+   curl -i http://testphp.vulnweb.com/user
+   ```
 
-- Server software is disclosed
-- Version numbers are revealed
+   <img width="924" height="275" alt="image" src="https://github.com/user-attachments/assets/62ea054e-dd22-4bb0-b16f-2e8df706e2bd" />
 
 
+
+   ```bash
+   curl -i http://testphp.vulnweb.com/test
+   ```
+
+   <img width="870" height="268" alt="image" src="https://github.com/user-attachments/assets/b033fce1-080b-49de-a7b3-6b214c647c81" />
+
+
+
+   ```bash
+   curl -i http://testphp.vulnweb.com/dev
+   ```
+
+   <img width="837" height="270" alt="image" src="https://github.com/user-attachments/assets/c2891657-b108-4120-96b5-17b0587b2623" />
+
+
+
+   ```bash
+   curl -i http://testphp.vulnweb.com/phpmyadmin
+   ```
+
+   <img width="870" height="263" alt="image" src="https://github.com/user-attachments/assets/ca0ab309-60da-4845-be94-6bc21ee878fb" />
+
+
+
+2. Test common API paths
+
+   ```bash
+   curl -i http://testphp.vulnweb.com/api
+   ```
+
+   <img width="942" height="275" alt="image" src="https://github.com/user-attachments/assets/44bca1bb-16b5-454a-bc22-b4177815b5f0" />
+
+
+   ```bash
+   curl -i http://testphp.vulnweb.com/api/v1
+   ```
+
+   <img width="879" height="263" alt="image" src="https://github.com/user-attachments/assets/5ce8c2e4-f57d-4f11-adfb-b9e2ffbe1f38" />
+
+
+--------------
+
+
+### Step 
 -----------
 
 
