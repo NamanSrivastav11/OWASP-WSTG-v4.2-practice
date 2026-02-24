@@ -38,7 +38,8 @@ Tools Used:
 
 - Web browser
 - OWASP ZAP (Spider, Sties Tree, History)
-- Directory enumeration (OWASP ZAP)
+- Network scanner (`nmap`)
+- `curl` for HTTP testing
 - DNS/host discovery tools (`nslookup`, `dig`)
 
 --------
@@ -70,11 +71,13 @@ While server fingeprinting does not constitute a vulnerability, **detailed versi
 
 ## Test Methodology
 
-The test is performed using using both passive and active reconnaissance techniques:
+Web application discovery involves addressing three key scenarios:
 
-1. **Passive enumeration**: DNS queries, web archives
-2. **Active enumeration**: Directory brute-forcing, HTTP method discovery, and common paths
-3. **Response analysis**: Examining HTTP response characteristics to identify application types
+1. Non-Standard URLs (Hidden Applications) -> Applications may be hosted at non-obvious URLs (e.g., `/admin`, `/webmail`) and are not referrenced elsewhere.
+
+2. Non-Standard Ports -> Web applications may be hosted on arbitrary TCP ports beyond 80 (HTTP) and 443 (HTTPS), such as 8080, 8000, etc.
+
+3. Virtual Hosts -> A single IP address can host multiple applications via different DNS names using HTTP 1.1 Host headers.
 
 --------
 
@@ -153,38 +156,97 @@ Testing Commands ->
    <img width="879" height="263" alt="image" src="https://github.com/user-attachments/assets/5ce8c2e4-f57d-4f11-adfb-b9e2ffbe1f38" />
 
 
+**Findings:**
+
+1. `/admin` returned `HTTP/1.1 301 Moved Permanently` which indicates that there is a *301 Redirect* and the application exists.
+
+
+
 --------------
 
 
-### Step 
+### Step 2 - Identify Non-Standard Applications and Virtual Hosts
+
+
+Discovering applications running on non-obvious paths or alternative virtual hosts.
+
+
+Testing Commands:
+
+
+   ```bash
+   # Test for redirects (do not follow redirects with -L flag)
+
+   curl -i -L http://testphp.vulnweb.com/
+   ```
+
+   <img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/4736f399-0db3-454d-a191-2214fac64604" />
+
+
+   ```bash
+   # Checking for multiple hostnames pointing to the same IP
+
+   nslookup testphp.vulnweb.com
+   nslookup www.testphp.vulnweb.com
+   ```
+
+   <img width="843" height="205" alt="image" src="https://github.com/user-attachments/assets/a5b2f62c-8430-4f1f-b250-edbd35c825e0" />
+
+
+
+   ```bash
+   curl -i http://testphp.vulnweb.com
+   ```
+
+   <img width="1126" height="419" alt="image" src="https://github.com/user-attachments/assets/25386d0f-3dc0-473d-86f5-e782aaac0ab4" />
+
+
+
 -----------
 
 
-2. Analyzing Error Responses
+### Step 3 - Directory Brute-Forcing
 
-   Request a non-existent resource while interception is enabled
+Systematically discovering hidden directories and applications using OWASP ZAP
 
-   **Request**
-   ```
-   GET / HTTES/1.1
-   Host: testphp.vulnweb.com
-   Cache-Control: max-age=0
-   Upgrade-Insecure-Requests: 1
-   User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36
-   Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
-   Accept-Encoding: gzip, deflate, br
-   Accept-Language: en-US,en;q=0.9
-   Connection: keep-alive
 
-   ```
+1. Open OWASP ZAP
 
-   Review the response body and headers for:
 
-   - Default error page signatures
-   - Platform-specific error formatting
-     
+2. Enter the target URL in the "URL to attack" field: `http://testphp.vulnweb.com`
 
-   <img width="1664" height="981" alt="image" src="https://github.com/user-attachments/assets/74c08cc1-c30b-4d9b-a81a-9b76fc0dc57a" />
+3. Click **Attack** -> **Scan**
+
+4. Navigate to **Tools** -> **Fuzzer**
+
+5. Right-click any request in the History tab
+
+6. Select **Fuzz**
+
+7. Highlight the path portion of the URL
+
+8. Click **Add** to add a payload
+
+9. Select **Fuzzer Wordlist** or upload a custom wordlist with common directories
+
+10. Click **Start Fuzzer**
+
+11. Filter results by HTTP status Code (200, 301, 302, 403)
+
+
+
+--------------------------------
+
+
+
+
+
+
+-----------------------
+
+
+### Step 4 - Analyze Application Responses and Fingerprinting
+
 
 
 
