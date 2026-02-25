@@ -84,81 +84,38 @@ Web application discovery involves addressing three key scenarios:
 
 ## Validation Steps
 
-### Step 1 - Enumerate Common Application Paths
+### Step 1 - DNS Enumeration and Reverse Lookups
 
-Here we will try to identify the applications hosted in common directories on the web server.
+We will try to discover all DNS names associated with the target IP address and identify virtual hosts
 
-Testing Commands -> 
+Testing Commands:
 
-1. Test common admin paths
+   ```bash
+   # Forward DNS Lookup
+
+   nslookup testphp.vulnweb.com
+   ```
+
+   <img width="656" height="232" alt="image" src="https://github.com/user-attachments/assets/07f2c656-3ecb-4b95-beaa-0679b309de01" />
+
+
+   ```bash
+   dig testphp.vulnweb.com
+   ```
+
+   <img width="835" height="683" alt="image" src="https://github.com/user-attachments/assets/943c76bd-55c9-4ab5-a863-c075874fcf9f" />
+
+
+
    
-   ```bash
-   curl -i http://testphp.vulnweb.com/admin
-   ```
-
-   <img width="875" height="283" alt="image" src="https://github.com/user-attachments/assets/2e4b04c0-75fe-4b23-8a21-6da4631b1c40" />
-
-
 
    ```bash
-   curl -i http://testphp.vulnweb.com/administrator
+   # Reverse DNS lookup
+
+   nslookup 44.228.249.3
    ```
    
-   <img width="885" height="265" alt="image" src="https://github.com/user-attachments/assets/d54f5939-5b85-4491-8266-ecb47659705f" />
-
-
-
-   ```bash
-   curl -i http://testphp.vulnweb.com/user
-   ```
-
-   <img width="924" height="275" alt="image" src="https://github.com/user-attachments/assets/62ea054e-dd22-4bb0-b16f-2e8df706e2bd" />
-
-
-
-   ```bash
-   curl -i http://testphp.vulnweb.com/test
-   ```
-
-   <img width="870" height="268" alt="image" src="https://github.com/user-attachments/assets/b033fce1-080b-49de-a7b3-6b214c647c81" />
-
-
-
-   ```bash
-   curl -i http://testphp.vulnweb.com/dev
-   ```
-
-   <img width="837" height="270" alt="image" src="https://github.com/user-attachments/assets/c2891657-b108-4120-96b5-17b0587b2623" />
-
-
-
-   ```bash
-   curl -i http://testphp.vulnweb.com/phpmyadmin
-   ```
-
-   <img width="870" height="263" alt="image" src="https://github.com/user-attachments/assets/ca0ab309-60da-4845-be94-6bc21ee878fb" />
-
-
-
-2. Test common API paths
-
-   ```bash
-   curl -i http://testphp.vulnweb.com/api
-   ```
-
-   <img width="942" height="275" alt="image" src="https://github.com/user-attachments/assets/44bca1bb-16b5-454a-bc22-b4177815b5f0" />
-
-
-   ```bash
-   curl -i http://testphp.vulnweb.com/api/v1
-   ```
-
-   <img width="879" height="263" alt="image" src="https://github.com/user-attachments/assets/5ce8c2e4-f57d-4f11-adfb-b9e2ffbe1f38" />
-
-
-**Findings:**
-
-1. `/admin` returned `HTTP/1.1 301 Moved Permanently` which indicates that there is a *301 Redirect* and the application exists.
+   <img width="694" height="129" alt="image" src="https://github.com/user-attachments/assets/b7530caf-20f1-430a-bbd5-dca5fae592e1" />
 
 
 
