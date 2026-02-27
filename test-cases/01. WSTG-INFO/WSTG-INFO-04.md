@@ -99,6 +99,7 @@ Testing Commands:
    <img width="656" height="232" alt="image" src="https://github.com/user-attachments/assets/07f2c656-3ecb-4b95-beaa-0679b309de01" />
 
 
+
    ```bash
    dig testphp.vulnweb.com
    ```
@@ -108,7 +109,6 @@ Testing Commands:
 
 
    
-
    ```bash
    # Reverse DNS lookup
 
@@ -118,57 +118,67 @@ Testing Commands:
    <img width="694" height="129" alt="image" src="https://github.com/user-attachments/assets/b7530caf-20f1-430a-bbd5-dca5fae592e1" />
 
 
+Result -> Single DNS name resolves to target IP; no additional virtual hosts discovered via reverse DNS.
+
 
 --------------
 
 
-### Step 2 - Identify Non-Standard Applications and Virtual Hosts
+### Step 2 - Identify Applications on Non-Standard Ports
 
 
-Discovering applications running on non-obvious paths or alternative virtual hosts.
+Discovering web services running on ports other than 80 and 443.
 
 
-Testing Commands:
+<img width="1165" height="952" alt="image" src="https://github.com/user-attachments/assets/60df79b1-c9f4-43aa-aea6-686dd9729910" />
 
 
-   ```bash
-   # Test for redirects (do not follow redirects with -L flag)
+Findings:
 
-   curl -i -L http://testphp.vulnweb.com/
-   ```
-
-   <img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/4736f399-0db3-454d-a191-2214fac64604" />
-
-
-   ```bash
-   # Checking for multiple hostnames pointing to the same IP
-
-   nslookup testphp.vulnweb.com
-   nslookup www.testphp.vulnweb.com
-   ```
-
-   <img width="843" height="205" alt="image" src="https://github.com/user-attachments/assets/a5b2f62c-8430-4f1f-b250-edbd35c825e0" />
+- Only port 80 (HTTP) is accessible for web applications
+- No alternative web ports exposed (8080, 8443, 300, etc.)
+- HTTPS (443) is filtered
+- SSH, FTP and RDP services are filtered
+- `Nginx 1.19.0` web server identified
 
 
+Security Findings:
 
-   ```bash
-   curl -i http://testphp.vulnweb.com
-   ```
-
-   <img width="1126" height="419" alt="image" src="https://github.com/user-attachments/assets/25386d0f-3dc0-473d-86f5-e782aaac0ab4" />
-
-
+- HTTP Only: Application runs on HTTP without HTTPS, exposing all traffic to eavesdropping
+- No alternate ports
+- Other services properly blocked at firewall level
 
 -----------
 
 
-### Step 3 - Directory Brute-Forcing
+### Step 3 - Test for Non-Standard URL Applications
 
-Systematically discovering hidden directories and applications using OWASP ZAP
+Probe for applications at non-obvious URL paths using directory enumeration.
+
+
+**Common Application Paths:**
+
+| Path | Typical Application |
+|------|-------------------|
+| `/admin` | Administrative interface |
+| `/administrator` | CMS admin panel |
+| `/webmail` | Email client |
+| `/mail` | Email interface |
+| `/phpmyadmin` | Database admin |
+| `/cpanel` | Hosting control panel |
+| `/plesk` | Hosting control panel |
+| `/app` | Custom application |
+| `/api` | REST/API endpoint |
+| `/intranet` | Internal application |
+| `/reports` | Reporting application |
+| `/download` | File download area |
+| `/upload` | File upload area |
+| `/test` | Test/development app |
+| `/dev` | Development environment |
+
 
 
 1. Open OWASP ZAP
-
 
 2. Enter the target URL in the "URL to attack" field: `http://testphp.vulnweb.com`
 
