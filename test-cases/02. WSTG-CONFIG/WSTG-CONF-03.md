@@ -220,3 +220,78 @@ Here we can check whether office documents and files are unnecessarily exposed
 | `.odt`, `.ods` | OpenOffice documents | Similar to MS Office files |
 
 
+
+
+
+
+
+
+
+
+---------------
+
+## Evidence:
+
+The following evidence was collected during testing:
+
+- Path list derived from application recources
+- Alternate-extension request/response results
+- Content analysis of any accessible non-standard extension files
+
+`testphp.vulnweb.com` demostrates secure file extension handling:
+
+- Bakup files (`.bak`, `.old`, `~`) not exposed
+- Configuration files (`.env`, `.config`) not exposed
+- Include files (`.inc`) protected
+- Archive files (`.zip`, `.tar.gz`) not publicle accessible
+- Double extension bypass not present
+
+
+The application properly handles file extensions and does not exposes sensitive files through misconfigurations.
+
+
+----------------
+
+## Result
+
+**NOT VULNERABLE**
+
+No sensitive files with backup/temporary/alternat extensions were confirmed as publicly accessible in this test.
+
+--------------
+
+## Impact
+
+It sensitive extension handling is misconfigured, attackers may:
+
+- Retrieve source code and application logic
+- Expose credentials and infrastructure details
+- Bypass normal access controls by requesting unintentional file variants
+
+
+------------------
+
+
+## Mitigation
+
+To prevent sensitive extension exposure:
+
+- Remove backup/temp/source artifacts from production deployments
+- Deny direct web access to non-whitelisted file extensions
+- Use deployment pipelines that exclude development and backup files
+- Perform periodic extension-based discovery testing in staging/production
+
+----------
+
+
+## Conclusion
+
+File extension handling is a fundamental security control. While `testphp.vulnweb.com` properly protects against common extension-based attacks, real-world applications often fail at this basic security requirement.
+Developers leave backup files, include configuration files in the web root, and fail to exclude version control directories.
+
+This test case is essential for any security assessment because file extension vulnerabilities are:
+- easy to exploit (just guessing the filename)
+- high impact (often leads to source code or credential disclosure)
+- Common in real applications
+
+Hence, file extension handling was tested against common backup and temporary variants. No exposed sensitive artifacts were identified, and extension handling appeared appropriatly restricted for tested paths.
