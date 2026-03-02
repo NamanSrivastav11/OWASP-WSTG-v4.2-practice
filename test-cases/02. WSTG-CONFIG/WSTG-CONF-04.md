@@ -81,4 +81,218 @@ These files are often not part of normal navigation, so explicit discovery and d
 
 Use OWASP ZAP Spider and Sites Tree to enumerate endpoints and file names. Extract high-value base names (for example: `login`, `index`, `admin`, `transfer`, `config`, `account`, etc.)
 
-We can also capture discovered directories to test for older copies
+We can also capture discovered directories to test for older copies (e.g., `/backup/`. `/old/`, `/temp/`, `/test/`).
+
+<img width="1920" height="1152" alt="image" src="https://github.com/user-attachments/assets/339be89c-ed7d-4ba4-a8cb-0f0444bea057" />
+
+
+
+
+--------------
+
+
+### Step 2 - Testing for Old/Backup Naming Conventions
+
+For each candidate file/path, we will try to request common backup and historical variants.
+
+- `login.php.bak`, `login_old.php`, `login.php~`
+- `index.bak`, `index.php.old`, `index.php.1`, default.asp.orig`
+- `config.php.save`, `db.conf.bak`
+
+
+Use `curl` or direct browser requests and record response status, content type and body behavior.
+
+Testing commands:
+
+- `curl -i http://testphp.vulnweb.com/login.php.bak`
+
+  <img width="704" height="301" alt="image" src="https://github.com/user-attachments/assets/41a3881d-2361-4306-a823-5d103c2479c1" />
+
+
+- `curl -i http://testphp.vulnweb.com/login_old.php`
+
+  <img width="749" height="200" alt="image" src="https://github.com/user-attachments/assets/d3d21458-fd50-4d58-958b-fd92f69f7abd" />
+
+
+- `curl -i http://testphp.vulnweb.com/login.php~`
+
+  <img width="767" height="305" alt="image" src="https://github.com/user-attachments/assets/60e0a51d-f70c-4e3c-a524-7abc76e6230d" />
+
+
+- `curl -i http://testphp.vulnweb.com/index.php.old`
+
+  <img width="804" height="302" alt="image" src="https://github.com/user-attachments/assets/1d98322c-a28e-45af-8aaa-8dab4a0d2a27" />
+
+
+- `curl -i http://testphp.vulnweb.com/index.php.1`
+
+  <img width="759" height="296" alt="image" src="https://github.com/user-attachments/assets/4e6a742a-0168-4832-bd44-aaf0c7a15e9d" />
+
+
+- `curl -i http://testphp.vulnweb.com/default.asp.origin`
+
+  <img width="785" height="294" alt="image" src="https://github.com/user-attachments/assets/7d30db5b-ff3c-4a17-9f12-c8f969ce0fca" />
+
+
+- `curl -i http://testphp.vulnweb.com/config.php.save`
+
+  <img width="857" height="302" alt="image" src="https://github.com/user-attachments/assets/fc58e1ea-775a-4061-a2bb-0c322c2ac92b" />
+
+
+- `curl -i http://testphp.vulnweb.com/db.conf.bak`
+
+  <img width="786" height="298" alt="image" src="https://github.com/user-attachments/assets/c509e9eb-c6bf-4615-a306-a5277e8200e6" />
+
+
+- `curl -i http://testphp.vulnweb.com/index.bak`
+
+  <img width="1115" height="628" alt="image" src="https://github.com/user-attachments/assets/014def21-4c28-41ff-9be3-c4e3f08026ee" />
+
+
+**Findings:**
+
+- `index.bak` -> HTTP `200 OK` Response Code was received; PHP source code served as plain text
+- The backup file contains the complete HTML/PHP template structure
+
+
+----------------
+
+### Step 3 - Test for Compressed Backup Archives
+
+We will try to identify backup archives that may contain complete application copies.
+
+**Common Archive Extensions:**
+
+| Extension | Format |
+|-----------|--------|
+| `.zip` | ZIP archive |
+| `.tar` | TAR archive |
+| `.tar.gz` | TAR + Gzip |
+| `.tgz` | TAR Gzip (short) |
+| `.rar` | RAR archive |
+| `.7z` | 7-Zip archive |
+| `.gz` | Gzip compressed |
+
+
+Here, I'll be using a simple powershell testing script that will enumerate through the application paths with common archive extensions.
+
+```powershell
+# Test archive filenames with multiple extensions
+$archives = @("backup", "application", "website", "source", "app.backup", "db.sql", "config", "database", "archive")
+$exts = @(".zip", ".tar.gz", ".tar", ".rar", ".7z", ".gz", ".bz2", ".tgz")
+foreach ($archive in $archives) { 
+  foreach ($ext in $exts) { 
+    $filename = $archive + $ext
+    $response = curl.exe -s -w "%{http_code}" -o ([IO.Path]::GetTempFileName()) "http://testphp.vulnweb.com/$filename"
+    Write-Host "$filename : $response" 
+  } 
+}
+```
+
+<img width="1277" height="1063" alt="image" src="https://github.com/user-attachments/assets/0b6629d7-09aa-401d-aed6-217ca7251370" />
+
+
+Similarly, backup directories can be tested by using a powershell script
+
+```powershell
+# Test common backup directories
+$dirs = @("backup", "backups", "old", "archive", "tmp", "archives", "download", "downloads")
+foreach ($dir in $dirs) { 
+  $response = curl.exe -s -w "%{http_code}" -o ([IO.Path]::GetTempFileName()) "http://testphp.vulnweb.com/$dir/"
+  Write-Host "$dir/ : $response" 
+}
+```
+
+<img width="1137" height="171" alt="image" src="https://github.com/user-attachments/assets/841f5cd1-6e21-4a16-b705-797177215bad" />
+
+
+### Archive Filenames Tested
+
+| Filename | Status | Finding |
+|----------|--------|---------|
+| backup.* | 404 | No backup archives found |
+| application.* | 404 | No application archives |
+| website.* | 404 | No website archives |
+| source.* | 404 | No source archives |
+| app.backup.* | 404 | No backup archives |
+| db.sql.* | 404 | No database backups |
+| config.* | 404 | No config archives |
+| database.* | 404 | No database archives |
+| archive.* | 404 | No archive files |
+
+
+-> All returned 404 Not Found
+
+
+### Backup Directories Tested
+
+| Directory | Status | Finding |
+|-----------|--------|---------|
+| /backup/ | 404 | Directory not accessible |
+| /backups/ | 404 | Directory not accessible |
+| /old/ | 404 | Directory not accessible |
+| /archive/ | 404 | Directory not accessible |
+| /tmp/ | 404 | Directory not accessible |
+| /archives/ | 404 | Directory not accessible |
+| /download/ | 404 | Directory not accessible |
+| /downloads/ | 404 | Directory not accessible |
+
+-> No backup directories exposed
+
+
+-----------------
+
+
+## Evidence
+
+The following evidence was collected during testing:
+
+- Source code disclosure via backup `index.bak` file
+- No backup files accessible
+- No Credentials exposed
+
+
+----------------
+
+## Result
+
+**VULNERABLE**
+
+Backup file vulnerability detected.
+
+The application contains an exposed backup file (`index.bak`) that serves PHP/HTML source code. This represents a significant security risk allowing attackers to:
+
+- Review application structure and logic
+- Identify include files and dependencies
+- Discover potential attack vectors
+- Bypass security controls by understanding implementation
+
+-------------
+
+
+## Impact
+
+The exposure of `index.bak` creates a serious confidentiality breach that allows attackers to fully understand the application's architecture and logic. The backup file reveals the include structure (`database_connect.php`) and template system, showing exactly how the application is organized. This architectural disclosure enables attackers to identify targeted attacks vectors that might not be apparent from just testing the running application.
+
+More critically , comparing the backup file with the current `index.php` version reveals what security patches were recently applied, allowing attackers to search for those same vulnerabilities in other parts of the application.
+
+--------------------
+
+## Mitigation
+
+To reduce risk from old/backup/unreferenced files:
+
+- Exclude backup/temp/archive artifacts from production deployments
+- Enforce strict server rules to deny unsafe file extensions and naming patterns
+- Remove deprecated resources and directories from web roots
+
+
+-----------------
+
+
+## Conclusion
+
+Testing for backup and unreferenced files (WSTG-CONF-04) is a critical component of configuration security assessment. This test identifies one of the most common yet dangerous oversights in web application deploymnet: leaving backup files in publicly accessible directories.
+
+The vulnerability is trivial to exploit; attackers can simply add common backup extensions to known filenames and download the results.
+Backup files present a complete attack surface- they expose architecture, logic, credentials, and sometimes contain older vulnerable code.
