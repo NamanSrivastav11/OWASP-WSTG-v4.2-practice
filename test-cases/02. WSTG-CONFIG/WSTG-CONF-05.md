@@ -153,4 +153,90 @@ $results | Format-Table -AutoSize
 ------------
 
 
-### Step 3 - 
+### Step 3 - Alternative Port Enumeration
+
+Admin interfaces may be hosted on alternative ports, commonly 8080, 8081, 8888, or other non-standard HTTP ports.
+
+We can use a simple powershell script here as well to enumerate through various port numbers.
+
+```powershell
+# Test common alternative ports for admin interfaces
+$adminPorts = @(8080, 8081, 8888, 3000, 5000, 9000, 8000, 8090)
+$adminPaths = @("/", "/admin", "/admin/", "/management")
+
+$results = @()
+foreach ($port in $adminPorts) {
+    foreach ($path in $adminPaths) {
+        $url = "http://testphp.vulnweb.com:$port$path"
+        try {
+            $response = curl.exe -s -m 2 -o /dev/null -w "%{http_code}" $url
+            if ($response -in @("200", "301", "302")) {
+                $results += @{
+                    Port = $port
+                    Path = $path
+                    StatusCode = $response
+                }
+            }
+        } catch {
+            # Timeout or connection refused
+        }
+    }
+}
+
+if ($results.Count -gt 0) {
+    Write-Host "Found potential admin interfaces on alternative ports:"
+    $results | Format-Table -AutoSize
+} else {
+    Write-Host "No admin interfaces found on alternative ports"
+}
+```
+
+
+Tested common alternative ports (8080, 8081, 8888, 3000, 5000, 9000, 8000, 8090) with 4 admin path variations.
+
+No services available on alternative ports. All connection attempts timed out or were refused.
+
+<img width="1526" height="100" alt="image" src="https://github.com/user-attachments/assets/9f39eaf3-0f3e-4233-b750-f8619c20411b" />
+
+
+------------------
+
+
+## Result
+
+**NOT VULNERABLE**
+
+Admin interfaces were enumerated and assessed for exposure and access control. No critical unauthorized administrative access was confirmed in this testing scope.
+
+
+----------------
+
+## Impact
+
+Administrative interfaces represent critical security boundaries. If discovered and accessible without proper authentication, attackers can gain complete control over application functionality, data, and user accounts.
+
+This includes the ability to create unauthorized administrative accounts, modify application configuration, access sensitive data, disable security controls, and inject malicious content.
+
+Additionally, parameter tampering vulnerabilities that enable privilege escalation can be exploited by authenticated users to gain unauthorized administrative access. The severity is critical because administrative compromise results in complete application compromise and potential compromise of all user data and systems.
+
+
+---------------
+
+## Mitigation
+
+To reduce risk from admin interface exposure:
+
+- Remove unused admin endpoints and legacy consoles
+- Restrict admin interfaces by network boundary (VPN/IP allowlist)
+- Enforce strong authentication and MFA for all admin access
+- Use centralized access logging and anomaly detection
+- Regurlarly retest for newly exposed management paths after deployments
+
+
+---------------
+
+
+## Conclusion
+
+WSTG-CONF-05 enumeration testing is essential to discover potentially exposed administrative interfaces that could provide unauthorized actors with privileged access to application functionality and data. The test case identifies common methods for discovering admin interfaces including directory enumeration, alternative port scanning.
+Regular execution of this test case helps organizations identify and remediate exposure of administrative interfaces before attackers can discover and exploit them, reducing the risk of unauthorized privilege escalation and complete application compromise.
