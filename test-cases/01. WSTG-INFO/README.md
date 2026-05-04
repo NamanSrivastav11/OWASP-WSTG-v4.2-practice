@@ -1,4 +1,4 @@
-<img width="200" height="348" alt="image" src="https://github.com/user-attachments/assets/47546c39-c8ca-4769-800a-3b274440bb4e" />
+<img width="210" height="130" alt="image" src="https://github.com/user-attachments/assets/47546c39-c8ca-4769-800a-3b274440bb4e" />
 
 
 # WSTG-INFO — Information Gathering
